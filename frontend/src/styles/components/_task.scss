@@ -1,0 +1,46 @@
+.task {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    cursor: grab;
+  
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border: 2px solid #be0606; /* Surbrillance rouge */
+    }
+  
+    &:active {
+      cursor: grabbing; /* Change le curseur lors du déplacement */
+    }
+  
+    h3 {
+      margin: 0 0 10px 0; /* Espacement avec les éléments suivants */
+      font-size: 16px;
+      color: #444;
+    }
+  
+    h4 {
+      font-size: 14px;
+      font-weight: 400;
+      color: #555;
+      margin: 10px 0; /* Espacement autour de la description */
+    }
+  
+    p {
+      font-size: 12px;
+      color: #666;
+      margin: 5px 0; /* Espacement avec les autres éléments */
+    }
+    .task-subcategory {
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 12px;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+  }
+  

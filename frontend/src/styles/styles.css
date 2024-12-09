@@ -1,0 +1,270 @@
+@charset "UTF-8";
+.task {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+  cursor: grab;
+}
+.task:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 2px solid #be0606; /* Surbrillance rouge */
+}
+.task:active {
+  cursor: grabbing; /* Change le curseur lors du déplacement */
+}
+.task h3 {
+  margin: 0 0 10px 0; /* Espacement avec les éléments suivants */
+  font-size: 16px;
+  color: #444;
+}
+.task h4 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+  margin: 10px 0; /* Espacement autour de la description */
+}
+.task p {
+  font-size: 12px;
+  color: #666;
+  margin: 5px 0; /* Espacement avec les autres éléments */
+}
+.task .task-subcategory {
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.calendar {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.calendar .calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.calendar .calendar-header h3 {
+  margin: 0;
+}
+.calendar .calendar-header button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.calendar .calendar-header button:hover {
+  background-color: #357abd;
+}
+.calendar .calendar-week {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+.calendar .calendar-week .calendar-day {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.calendar .calendar-week .calendar-day:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.calendar .calendar-week .calendar-day p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+.calendar .calendar-week .calendar-day .tasks-for-day {
+  margin-top: 10px;
+}
+.calendar .calendar-week .calendar-day .tasks-for-day .task {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+.calendar .calendar-week .calendar-day .tasks-for-day .task p {
+  margin: 0;
+  font-size: 12px;
+}
+.calendar .calendar-week .calendar-day .tasks-for-day .task small {
+  font-size: 10px;
+  color: #666;
+}
+
+.column {
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 400px; /* Largeur minimale pour chaque colonne */
+  max-width: 400px; /* Largeur maximale pour chaque colonne */
+  transition: background-color 0.3s;
+}
+.column:hover {
+  background-color: #e8e8e8; /* Indique une zone de drop */
+}
+.column h2 {
+  text-align: center;
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.column .tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.column .draggable-column {
+  cursor: grab;
+  transition: transform 0.2s ease; /* Ajoute une transition fluide */
+}
+.column .draggable-column:active {
+  cursor: grabbing;
+  transform: rotate(-5deg); /* Penche la colonne de 20% vers la gauche */
+}
+.column .draggable-column:hover {
+  opacity: 0.8; /* Réduit légèrement l'opacité pour l'effet visuel */
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal .modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 20%;
+  height: 50%;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.modal .modal-content h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 50px;
+}
+.modal .modal-content input {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.modal .modal-content select {
+  margin-top: 20px;
+  padding: 10px 40px;
+  border-radius: 5px;
+  font-size: larger;
+}
+.modal .modal-content button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 90px 15px 0;
+}
+.modal .modal-content button:hover {
+  background-color: #45a049;
+}
+.modal .modal-content button.close-btn {
+  background-color: #f44336;
+}
+.modal .modal-content button.close-btn:hover {
+  background-color: #d32f2f;
+}
+
+.task-board {
+  display: flex;
+  flex-direction: column; /* Organisation en colonne pour inclure les boutons et colonnes */
+  align-items: center; /* Centre horizontalement le contenu */
+  gap: 20px;
+  padding: 20px;
+  height: 100vh; /* Hauteur totale de la page */
+  /* Conteneur des boutons */
+  /* Boutons */
+  /* Conteneur des colonnes */
+  /* Message d'erreur */
+}
+.task-board .button-container {
+  display: flex;
+  justify-content: center; /* Centre les boutons horizontalement */
+  align-items: center; /* Aligne les boutons verticalement */
+  gap: 20px; /* Espacement entre les boutons */
+  width: 100%; /* S'étend sur toute la largeur */
+  margin-bottom: 10px;
+}
+.task-board .add-column-btn,
+.task-board .add-task-btn {
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+.task-board .add-column-btn:hover,
+.task-board .add-task-btn:hover {
+  background-color: #357abd;
+}
+.task-board .contain-columns {
+  display: flex;
+  flex-wrap: wrap; /* Permet d'aller à la ligne si nécessaire */
+  gap: 20px; /* Espacement entre les colonnes */
+  width: 100%; /* S'étend sur toute la largeur */
+  justify-content: center; /* Centre les colonnes horizontalement */
+}
+.task-board .error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.task-board .add-subcategory-btn {
+  background-color: #ffc107;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+.task-board .add-subcategory-btn:hover {
+  background-color: #e0a800;
+}
+
+/*# sourceMappingURL=styles.css.map */

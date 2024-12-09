@@ -1,0 +1,80 @@
+.calendar {
+    margin-bottom: 20px;
+    text-align: center;
+  
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  
+      h3 {
+        margin: 0;
+      }
+  
+      button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #357abd;
+        }
+      }
+    }
+  
+    .calendar-week {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+  
+      .calendar-day {
+        background-color: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        flex: 1;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+  
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+  
+        p {
+          margin: 0;
+          font-size: 14px;
+          font-weight: bold;
+        }
+  
+        .tasks-for-day {
+          margin-top: 10px;
+  
+          .task {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            margin-bottom: 5px;
+  
+            p {
+              margin: 0;
+              font-size: 12px;
+            }
+  
+            small {
+              font-size: 10px;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
+  

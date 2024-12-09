@@ -1,0 +1,43 @@
+.column {
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 400px; /* Largeur minimale pour chaque colonne */
+    max-width: 400px; /* Largeur maximale pour chaque colonne */
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #e8e8e8; /* Indique une zone de drop */
+    }
+  
+    h2 {
+      text-align: center;
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .draggable-column {
+        cursor: grab;
+        transition: transform 0.2s ease; /* Ajoute une transition fluide */
+      
+        &:active {
+          cursor: grabbing;
+          transform: rotate(-5deg); /* Penche la colonne de 20% vers la gauche */
+        }
+      
+        &:hover {
+          opacity: 0.8; /* Réduit légèrement l'opacité pour l'effet visuel */
+        }
+      }
+      
+  }
+  
