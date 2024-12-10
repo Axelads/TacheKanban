@@ -14,9 +14,11 @@ const Modal = ({ show, title, children, onClose }) => {
       <div className="modal-content">
         <h3>{title}</h3>
         {children}
-        <button className="close-btn" onClick={onClose}>
-          Fermer
-        </button>
+        <div className="modal-actions">
+          <button className="close-btn" onClick={onClose}>
+            Fermer
+          </button>
+        </div>
       </div>
     </div>
   );

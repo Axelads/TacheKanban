@@ -1,191 +1,142 @@
 import React, { useState } from 'react';
-import Column from '../components/Column';
-import Modal from '../components/Modal';
+import { useSubcategory } from '../components/SubcategoryData';
+import ButtonBoardAdd from '../components/ButtonBoardAdd';
+import ColumnModal from '../components/ColumnModal';
 import AddTaskModal from '../components/AddTaskModal';
-import Calendar from '../components/Calendar'; // Importation du calendrier
+import AddSubcategoryModal from '../components/AddSubcategoryModal';
+import ModalTaskContain from '../components/ModalTaskContain';
+import Columns from '../components/Columns';
+import Calendar from '../components/Calendar';
 
 const TaskBoard = () => {
   const [tasks, setTasks] = useState([]); // Liste des tâches
   const [columns, setColumns] = useState([]); // Liste des colonnes
-  const [subcategories, setSubcategories] = useState([]); // Liste des sous-catégories
-  const [showColumnModal, setShowColumnModal] = useState(false);
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showSubcategoryModal, setShowSubcategoryModal] = useState(false); // État pour la modale de sous-catégorie
-  const [newColumnName, setNewColumnName] = useState('');
-  const [newSubcategory, setNewSubcategory] = useState({ name: '', color: '#000000' });
-  const [errorMessage, setErrorMessage] = useState('');
-  const [currentTask, setCurrentTask] = useState(null);
-  const [draggedTaskId, setDraggedTaskId] = useState(null);
+  const [showTaskModal, setShowTaskModal] = useState(false); // Modal pour ajouter une tâche
+  const [showTaskEditModal, setShowTaskEditModal] = useState(false); // Modal pour modifier une tâche
+  const [showColumnModal, setShowColumnModal] = useState(false); // Modal pour ajouter une colonne
+  const [showSubcategoryModal, setShowSubcategoryModal] = useState(false); // Modal pour ajouter une sous-catégorie
+  const [currentTask, setCurrentTask] = useState(null); // Tâche actuellement sélectionnée
+  const [draggedTaskId, setDraggedTaskId] = useState(null); // ID de la tâche en cours de drag
 
-  // Palette de couleurs pour les colonnes
-  const colors = ['#FF5733', '#33FF57', '#3357FF', '#FFC300', '#DAF7A6', '#C70039', '#581845', '#FF33C4', '#33FFF3', '#FF9633'];
+  const { subcategories } = useSubcategory(); // Récupère les sous-catégories
 
   // Ajouter une colonne
-  const addColumn = () => {
-    if (newColumnName.trim() !== '') {
-      const newColumnId = columns.length + 1;
-      setColumns((prevColumns) => [
-        ...prevColumns,
-        {
-          id: newColumnId,
-          name: newColumnName.trim(),
-          color: colors[(newColumnId - 1) % colors.length],
-        },
-      ]);
-      setNewColumnName('');
-      setShowColumnModal(false);
-    } else {
-      setErrorMessage('Le nom de la colonne ne peut pas être vide.');
-    }
-  };
-
-  // Ajouter une sous-catégorie
-  const addSubcategory = () => {
-    if (newSubcategory.name.trim()) {
-      setSubcategories((prev) => [...prev, { ...newSubcategory, id: Date.now() }]);
-      setNewSubcategory({ name: '', color: '#000000' }); // Réinitialise le formulaire
-      setShowSubcategoryModal(false); // Ferme la modale
-    } else {
-      setErrorMessage('Le nom de la sous-catégorie ne peut pas être vide.');
-    }
-  };
-
-  // Ajouter ou modifier une tâche
-  const saveTask = (task) => {
-    if (!columns.length) {
-      setErrorMessage('Merci d’ajouter une colonne avant d’ajouter une tâche.');
+  const addColumn = (columnName) => {
+    if (columnName.trim() === '') {
+      alert('Le nom de la colonne ne peut pas être vide.');
       return;
     }
 
-    if (task.id) {
-      // Modification d'une tâche existante
-      setTasks((prevTasks) =>
-        prevTasks.map((t) =>
-          t.id === task.id ? { ...task, status: task.status || columns[0].id } : t
-        )
-      );
-    } else {
-      // Ajout d'une nouvelle tâche
-      const newTask = {
-        id: Date.now(),
-        ...task,
-        status: task.status || columns[0].id, // Par défaut, première colonne
-      };
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-    }
+    const newColumn = {
+      id: Date.now(),
+      name: columnName,
+    };
 
-    setShowTaskModal(false);
-    setCurrentTask(null);
-    setErrorMessage('');
+    setColumns((prev) => [...prev, newColumn]);
   };
 
-  // Déplacer une tâche entre colonnes
-  const moveTask = (taskId, targetColumnId) => {
+  // Ajouter ou mettre à jour une tâche
+  const handleSaveTask = (task) => {
+    if (!columns.length) {
+      alert('Merci d’ajouter une colonne avant d’ajouter une tâche.');
+      return;
+    }
+
+    const updatedTasks = task.id
+      ? tasks.map((t) => (t.id === task.id ? { ...task } : t)) // Mise à jour de la tâche existante
+      : [...tasks, { ...task, id: Date.now(), status: task.status || columns[0]?.id }]; // Nouvelle tâche
+
+    setTasks(updatedTasks);
+
+    setShowTaskModal(false);
+    setShowTaskEditModal(false);
+    setCurrentTask(null);
+  };
+
+  // Supprimer une tâche
+  const handleDeleteTask = (taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    setShowTaskEditModal(false);
+    setCurrentTask(null);
+  };
+
+  // Gérer le drag and drop
+  const handleDragStart = (taskId) => {
+    setDraggedTaskId(taskId);
+  };
+
+  const handleDrop = (targetColumnId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === taskId ? { ...task, status: targetColumnId } : task
+        task.id === draggedTaskId ? { ...task, status: targetColumnId } : task
       )
     );
+    setDraggedTaskId(null);
+  };
+
+  const handleTaskClick = (task) => {
+    setCurrentTask(task); // Définit la tâche actuelle pour la modification
+    setShowTaskEditModal(true); // Affiche la modale de modification
   };
 
   return (
     <div className="task-board">
-      <div className="button-container">
-        <button className="add-column-btn" onClick={() => setShowColumnModal(true)}>
-          Ajouter une colonne
-        </button>
-        <button
-          className="add-task-btn"
-          onClick={() => {
-            setShowTaskModal(true);
-            setCurrentTask(null); // Réinitialise pour créer une nouvelle tâche
-          }}
-        >
-          Ajouter une tâche
-        </button>
-        <button
-          className="add-subcategory-btn"
-          onClick={() => setShowSubcategoryModal(true)}
-        >
-          Ajouter une sous-catégorie
-        </button>
+      <ButtonBoardAdd
+        onAddColumn={() => setShowColumnModal(true)}
+        onAddTask={() => setShowTaskModal(true)}
+        onAddSubcategory={() => setShowSubcategoryModal(true)}
+      />
+
+      <div className="subcategory-list">
+        <h3>Sous-catégories</h3>
+        <ul>
+          {subcategories.map((sub) => (
+            <li key={sub.id} style={{ color: sub.color }}>
+              {sub.title}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <Columns
+        columns={columns}
+        tasks={tasks}
+        subcategories={subcategories}
+        onTaskClick={handleTaskClick} // Ouvre la modale pour modifier la tâche
+        onDragStartTask={handleDragStart}
+        onDropTask={handleDrop}
+      />
 
-      <div className="contain-columns">
-  {columns.map((column) => (
-    <Column
-      key={column.id}
-      columnId={column.id}
-      columnName={column.name}
-      tasks={tasks.filter((task) => task.status === column.id)} // Filtrer les tâches par ID de colonne
-      color={column.color}
-      subcategories={subcategories} // Transmettre les sous-catégories
-      onTaskClick={(task) => {
-        setCurrentTask(task);
-        setShowTaskModal(true);
-      }}
-      onDragStartTask={(taskId) => setDraggedTaskId(taskId)}
-      onDropTask={() => moveTask(draggedTaskId, column.id)}
-    />
-  ))}
-</div>
-
-      {/* Ajout du calendrier en dessous des colonnes */}
       <Calendar tasks={tasks} columns={columns} />
 
-      {/* Modale pour ajouter une colonne */}
-      <Modal
+      <ColumnModal
         show={showColumnModal}
-        title="Ajouter une colonne"
         onClose={() => setShowColumnModal(false)}
-      >
-        <input
-          type="text"
-          placeholder="Nom de la colonne"
-          value={newColumnName}
-          onChange={(e) => setNewColumnName(e.target.value)}
-        />
-        <button onClick={addColumn}>Ajouter</button>
-      </Modal>
+        addColumn={addColumn}
+      />
 
-      {/* Modale pour ajouter une sous-catégorie */}
-      <Modal
-        show={showSubcategoryModal}
-        title="Ajouter une sous-catégorie"
-        onClose={() => setShowSubcategoryModal(false)}
-      >
-        <input
-          type="text"
-          placeholder="Nom de la sous-catégorie"
-          value={newSubcategory.name}
-          onChange={(e) =>
-            setNewSubcategory((prev) => ({ ...prev, name: e.target.value }))
-          }
-        />
-        <input
-          type="color"
-          value={newSubcategory.color}
-          onChange={(e) =>
-            setNewSubcategory((prev) => ({ ...prev, color: e.target.value }))
-          }
-        />
-        <button onClick={addSubcategory}>Ajouter</button>
-      </Modal>
-
-      {/* Modale pour ajouter ou modifier une tâche */}
       <AddTaskModal
         show={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        onSaveTask={handleSaveTask}
+        columns={columns}
+      />
+
+      <AddSubcategoryModal
+        show={showSubcategoryModal}
+        onClose={() => setShowSubcategoryModal(false)}
+      />
+
+      <ModalTaskContain
+        show={showTaskEditModal} // Ouvre la modale pour modifier une tâche
         onClose={() => {
-          setShowTaskModal(false);
+          setShowTaskEditModal(false);
           setCurrentTask(null);
         }}
-        onSaveTask={saveTask}
-        onDeleteTask={(taskId) => setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId))}
-        columns={columns.map((col) => ({ id: col.id, name: col.name }))} // Passe les colonnes au format attendu
+        onSaveTask={handleSaveTask} // Sauvegarde la tâche mise à jour
+        onDeleteTask={handleDeleteTask} // Supprime la tâche
+        task={currentTask} // Passe la tâche actuelle
         subcategories={subcategories} // Passe les sous-catégories
-        initialTask={currentTask}
       />
     </div>
   );

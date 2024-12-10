@@ -9,7 +9,7 @@ const Columns = ({ columns, tasks, subcategories, onTaskClick, onDragStartTask, 
         columnId={column.id}
         columnName={column.name}
         tasks={tasks.filter((task) => task.status === column.id)}
-        subcategories={subcategories}
+        subcategories={subcategories} // Passe les sous-catégories au Column
         onTaskClick={onTaskClick}
         onDragStartTask={onDragStartTask}
         onDropTask={(targetColumnId) => onDropTask(targetColumnId)}

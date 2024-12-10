@@ -1,8 +1,14 @@
 import React from 'react';
 import AppRouter from './AppRouter';
 
+import { SubcategoryProvider } from './components/SubcategoryData';
+
 function App() {
-  return <AppRouter />;
+  return (
+    <SubcategoryProvider>
+      <AppRouter />
+    </SubcategoryProvider>
+  );
 }
 
 export default App;

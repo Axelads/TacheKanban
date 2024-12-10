@@ -1,60 +1,49 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useSubcategory } from './SubcategoryData';
 
-const AddTaskModal = ({
-  show,
-  onClose,
-  onSaveTask,
-  onDeleteTask,
-  columns,
-  subcategories, // Ajout des sous-catégories passées en prop
-  initialTask,
-}) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    status: columns.length > 0 ? columns[0].id : '', // ID de la première colonne par défaut
-    subcategory: '', // Pas de sous-catégorie par défaut ("Aucun")
-  });
+const AddTaskModal = ({ show, onClose, onSaveTask, columns }) => {
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [subcategoryId, setSubcategoryId] = useState('');
+  const { subcategories } = useSubcategory();
 
-  // Réinitialisation des champs du formulaire
-  const resetForm = useCallback(() => {
-    setFormData({
-      title: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      status: columns.length > 0 ? columns[0].id : '', // ID de la première colonne par défaut
-      subcategory: '', // Pas de sous-catégorie par défaut ("Aucun")
-    });
-  }, [columns]);
-
-  // Initialisation du formulaire lorsque `initialTask` ou `columns`/`subcategories` changent
-  useEffect(() => {
-    if (initialTask) {
-      setFormData(initialTask); // Remplit le formulaire avec les données existantes
-    } else {
-      resetForm(); // Réinitialise le formulaire pour une nouvelle tâche
+  const handleSaveTask = () => {
+    if (!columns?.length) {
+      alert('Merci d’ajouter une colonne avant d’ajouter une tâche.');
+      return;
     }
-  }, [initialTask, columns, subcategories, resetForm]);
 
-  // Gère les modifications des champs du formulaire
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Soumet le formulaire
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.title.trim()) {
-      onSaveTask(formData);
-      resetForm(); // Réinitialise les champs après ajout
-      onClose(); // Ferme la modale après soumission
-    } else {
-      console.error('Le titre est requis.', formData);
+    if (taskTitle.trim() === '') {
+      alert('Le titre de la tâche ne peut pas être vide.');
+      return;
     }
+
+    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+      alert('La date de début doit être antérieure à la date de fin.');
+      return;
+    }
+
+    const newTask = {
+      id: Date.now(),
+      title: taskTitle,
+      description: taskDescription,
+      startDate,
+      endDate,
+      columnId: columns[0]?.id,
+      subcategoryId: subcategoryId || null,
+    };
+
+    console.log('Task being added in AddTaskModal:', newTask);
+    onSaveTask(newTask);
+
+    setTaskTitle('');
+    setTaskDescription('');
+    setStartDate('');
+    setEndDate('');
+    setSubcategoryId('');
+    onClose();
   };
 
   if (!show) return null;
@@ -62,70 +51,55 @@ const AddTaskModal = ({
   return (
     <div className="modal">
       <div className="modal-content">
-        <h3>{initialTask ? 'Modifier la tâche' : 'Ajouter une tâche'}</h3>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="title"
-            placeholder="Titre"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-          <input
-            type="datetime-local"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-          />
-          <input
-            type="datetime-local"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-          />
-          <select
-            name="subcategory"
-            value={formData.subcategory}
-            onChange={handleChange}
-          >
-            <option value="">Aucun</option> {/* Option "Aucun" */}
-            {subcategories.map((sub) => (
-              <option key={sub.id} value={sub.id}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
-          <div className="modal-actions">
-            <button type="submit">{initialTask ? 'Mettre à jour' : 'Ajouter'}</button>
-            <button
-              type="button"
-              onClick={() => {
-                resetForm();
-                onClose();
-              }}
+        <h3>Ajouter une tâche</h3>
+        {columns?.length > 0 ? (
+          <>
+            <input
+              type="text"
+              placeholder="Titre de la tâche"
+              value={taskTitle}
+              onChange={(e) => setTaskTitle(e.target.value)}
+            />
+            <textarea
+              placeholder="Description de la tâche"
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+            />
+            <label htmlFor="start-date">Date et heure de début :</label>
+            <input
+              type="datetime-local"
+              id="start-date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <label htmlFor="end-date">Date et heure de fin :</label>
+            <input
+              type="datetime-local"
+              id="end-date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+            <label htmlFor="subcategory">Sous-catégorie :</label>
+            <select
+              id="subcategory"
+              value={subcategoryId}
+              onChange={(e) => setSubcategoryId(e.target.value)}
             >
-              Annuler
-            </button>
-            {initialTask && (
-              <button
-                type="button"
-                onClick={() => {
-                  onDeleteTask(initialTask.id);
-                  onClose();
-                }}
-              >
-                Supprimer
-              </button>
-            )}
-          </div>
-        </form>
+              <option value="">Aucun</option>
+              {subcategories.map((sub) => (
+                <option key={`subcategory-${sub.id}`} value={sub.id}>
+                  {sub.title}
+                </option>
+              ))}
+            </select>
+            <div className="modal-actions">
+              <button onClick={handleSaveTask}>Ajouter</button>
+              <button onClick={onClose}>Annuler</button>
+            </div>
+          </>
+        ) : (
+          <p>Aucune colonne disponible. Ajoutez une colonne d'abord.</p>
+        )}
       </div>
     </div>
   );
